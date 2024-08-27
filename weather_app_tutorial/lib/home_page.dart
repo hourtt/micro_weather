@@ -101,48 +101,50 @@ class WeatherDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: weatherData.length,
-      itemBuilder: (context, index) {
-        String iconCode = weatherData[index]['weather'][0]['icon'];
-        String iconUrl = 'http://openweathermap.org/img/wn/$iconCode@2x.png';
-        return GestureDetector(
-          child: Card(
-            color: Colors.blueGrey.withOpacity(0.7),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            elevation: 10,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${weatherData[index]['name']}',
-                    style: Lora.textStyle,
-                  ),
-                  BuildWeatherInfoRow('Temperature',
-                      '${(weatherData[index]['main']['temp'] - 273.15).toStringAsFixed(1)}°C'),
-                  BuildWeatherInfoRow('Feels Like',
-                      '${(weatherData[index]['main']['feels_like'] - 273.15).toStringAsFixed(1)}°C'),
-                  BuildWeatherInfoRow('Weather',
-                      '${weatherData[index]['weather'][0]['description']}'),
-                  BuildWeatherInfoRow(
-                      'Humidity', '${weatherData[index]['main']['humidity']}%'),
-                  BuildWeatherInfoRow('Pressure',
-                      '${weatherData[index]['main']['pressure']} hPa'),
-                  BuildWeatherInfoRow('Wind Speed',
-                      '${weatherData[index]['wind']['speed']} m/s'),
-                  BuildWeatherInfoRow('Wind Direction',
-                      '${weatherData[index]['wind']['deg']}°'),
-                  const SizedBox(height: 10),
-                  Image.network(iconUrl),
-                ],
+    return SafeArea(
+      child: ListView.builder(
+        itemCount: weatherData.length,
+        itemBuilder: (context, index) {
+          String iconCode = weatherData[index]['weather'][0]['icon'];
+          String iconUrl = 'http://openweathermap.org/img/wn/$iconCode@2x.png';
+          return GestureDetector(
+            child: Card(
+              color: Colors.blueGrey.withOpacity(0.7),
+              shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              elevation: 10,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${weatherData[index]['name']}',
+                      style: Lora.textStyle,
+                    ),
+                    BuildWeatherInfoRow('Temperature',
+                        '${(weatherData[index]['main']['temp'] - 273.15).toStringAsFixed(1)}°C'),
+                    BuildWeatherInfoRow('Feels Like',
+                        '${(weatherData[index]['main']['feels_like'] - 273.15).toStringAsFixed(1)}°C'),
+                    BuildWeatherInfoRow('Weather',
+                        '${weatherData[index]['weather'][0]['description']}'),
+                    BuildWeatherInfoRow(
+                        'Humidity', '${weatherData[index]['main']['humidity']}%'),
+                    BuildWeatherInfoRow('Pressure',
+                        '${weatherData[index]['main']['pressure']} hPa'),
+                    BuildWeatherInfoRow('Wind Speed',
+                        '${weatherData[index]['wind']['speed']} m/s'),
+                    BuildWeatherInfoRow('Wind Direction',
+                        '${weatherData[index]['wind']['deg']}°'),
+                    const SizedBox(height: 10),
+                    Image.network(iconUrl),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
