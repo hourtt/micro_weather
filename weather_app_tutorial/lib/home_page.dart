@@ -28,17 +28,17 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     fetchWeather([
-      'kampot',
+      'Siem Reap',
+      'Phnom Penh',
       'sihanoukville',
+      'Tokyo',
       'Seoul',
-      'Hanoi',
       'Taipei',
       'Singapore',
       'London',
-      'Paris',
-      'Tokyo',
+      'Hanoi',
       'Hong Kong',
-      'Phnom Penh',
+      'Paris',
       'Beijing',
       'Bangkok',
     ]);
