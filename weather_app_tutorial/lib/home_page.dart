@@ -29,18 +29,18 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     fetchWeather([
       'kampot',
+      'sihanoukville',
+      'Seoul',
       'Hanoi',
-      'Hong Kong',
+      'Taipei',
+      'Singapore',
+      'London',
       'Paris',
       'Tokyo',
+      'Hong Kong',
       'Phnom Penh',
-      'Bangkok',
-      'Kuala Lumpur',
-      'Singapore',
-      'Sydney',
       'Beijing',
-      'Melbourne',
-      'Seoul',
+      'Bangkok',
     ]);
   }
 
@@ -65,21 +65,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Future<void> fetchWeather(String city) async {
-  //   setState(() {
-  //     _loading = true;
-  //   });
-  //   final response = await http.get(Uri.parse('$apiUrl?q=$city&appid=$apiKey'));
-  //   if (response.statusCode == 200) {
-  //     setState(() {
-  //       _weatherData = json.decode(response.body);
-  //       _loading = false;
-  //     });
-  //   } else {
-  //     throw Exception('Failed to load weather data');
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,36 +81,11 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Column(
           children: [
-            const SizedBox(height: 50),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  //     Expanded(
-                  //   child: TextField(
-                  //     controller: _cityController,
-                  //     decoration: InputDecoration(
-                  //       labelText: 'Enter city name',
-                  //       border: InputBorder.none,
-                  //       labelStyle: TextStyle(
-                  //         color: Colors.grey[600],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  // IconButton(
-                  //   icon: Icon(Icons.search, color: Colors.blue),
-                  //   onPressed: () {
-                  //     fetchWeather(_cityController.text);
-                  //   },
-                  // ),
-                  Expanded(
-                    child: _loading
-                        ? const Center(child: CircularProgressIndicator())
-                        : WeatherDisplay(weatherData: _weatherData),
-                  ),
-                ],
-              ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : WeatherDisplay(weatherData: _weatherData),
             ),
           ],
         ),
@@ -161,40 +121,20 @@ class WeatherDisplay extends StatelessWidget {
                     '${weatherData[index]['name']}',
                     style: Lora.textStyle,
                   ),
-                  Text(
-                    'Temperature: ${(weatherData[index]['main']['temp'] - 273.15).toStringAsFixed(2)}°C',
-                    style: Amiko.textStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Feels Like: ${(weatherData[index]['main']['feels_like'] - 273.15).toStringAsFixed(2)}°C',
-                    style: Amiko.textStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Weather: ${weatherData[index]['weather'][0]['description']}',
-                    style: Amiko.textStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Humidity: ${weatherData[index]['main']['humidity']}%',
-                    style: Amiko.textStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Pressure: ${weatherData[index]['main']['pressure']} hPa',
-                    style: Amiko.textStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Wind Speed: ${weatherData[index]['wind']['speed']} m/s',
-                    style: Amiko.textStyle,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Wind Direction: ${weatherData[index]['wind']['deg']}°',
-                    style: Amiko.textStyle,
-                  ),
+                  BuildWeatherInfoRow('Temperature',
+                      '${(weatherData[index]['main']['temp'] - 273.15).toStringAsFixed(1)}°C'),
+                  BuildWeatherInfoRow('Feels Like',
+                      '${(weatherData[index]['main']['feels_like'] - 273.15).toStringAsFixed(1)}°C'),
+                  BuildWeatherInfoRow('Weather',
+                      '${weatherData[index]['weather'][0]['description']}'),
+                  BuildWeatherInfoRow(
+                      'Humidity', '${weatherData[index]['main']['humidity']}%'),
+                  BuildWeatherInfoRow('Pressure',
+                      '${weatherData[index]['main']['pressure']} hPa'),
+                  BuildWeatherInfoRow('Wind Speed',
+                      '${weatherData[index]['wind']['speed']} m/s'),
+                  BuildWeatherInfoRow('Wind Direction',
+                      '${weatherData[index]['wind']['deg']}°'),
                   const SizedBox(height: 10),
                   Image.network(iconUrl),
                 ],
@@ -203,6 +143,25 @@ class WeatherDisplay extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget BuildWeatherInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(color: Colors.white70, fontSize: 16),
+          ),
+          Text(
+            value,
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+        ],
+      ),
     );
   }
 }
