@@ -1,0 +1,208 @@
+// ignore_for_file: unused_local_variable
+
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'package:weather_app_tutorial/component/color.dart';
+import 'package:weather_app_tutorial/component/text.dart';
+import 'dart:convert';
+import 'consts.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List _weatherData = [];
+  bool _loading = true;
+  final TextEditingController _cityController = TextEditingController();
+
+  @override
+  // void initState() {
+  //   super.initState();
+  //   fetchWeather('Sihanoukville');
+  // }
+  void initState() {
+    super.initState();
+    fetchWeather([
+      'kampot',
+      'Hanoi',
+      'Hong Kong',
+      'Paris',
+      'Tokyo',
+      'Phnom Penh',
+      'Bangkok',
+      'Kuala Lumpur',
+      'Singapore',
+      'Sydney',
+      'Beijing',
+      'Melbourne',
+      'Seoul',
+    ]);
+  }
+
+  Future<void> fetchWeather(List cities) async {
+    setState(() {
+      _loading = true;
+    });
+    for (var city in cities) {
+      final response =
+          await http.get(Uri.parse('$apiUrl?q=$city&appid=$apiKey'));
+      if (response.statusCode == 200) {
+        setState(() {
+          _weatherData.add(json.decode(response.body));
+          _loading = false;
+        });
+      } else {
+        throw Exception('Failed to load weather data');
+      }
+    }
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  // Future<void> fetchWeather(String city) async {
+  //   setState(() {
+  //     _loading = true;
+  //   });
+  //   final response = await http.get(Uri.parse('$apiUrl?q=$city&appid=$apiKey'));
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       _weatherData = json.decode(response.body);
+  //       _loading = false;
+  //     });
+  //   } else {
+  //     throw Exception('Failed to load weather data');
+  //   }
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color.fromARGB(255, 4, 34, 58), // Start color
+              const Color.fromARGB(255, 88, 153, 165), // End color
+            ],
+          ),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 50),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  //     Expanded(
+                  //   child: TextField(
+                  //     controller: _cityController,
+                  //     decoration: InputDecoration(
+                  //       labelText: 'Enter city name',
+                  //       border: InputBorder.none,
+                  //       labelStyle: TextStyle(
+                  //         color: Colors.grey[600],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // IconButton(
+                  //   icon: Icon(Icons.search, color: Colors.blue),
+                  //   onPressed: () {
+                  //     fetchWeather(_cityController.text);
+                  //   },
+                  // ),
+                  Expanded(
+                    child: _loading
+                        ? const Center(child: CircularProgressIndicator())
+                        : WeatherDisplay(weatherData: _weatherData),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class WeatherDisplay extends StatelessWidget {
+  final List weatherData;
+
+  const WeatherDisplay({super.key, required this.weatherData});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: weatherData.length,
+      itemBuilder: (context, index) {
+        String iconCode = weatherData[index]['weather'][0]['icon'];
+        String iconUrl = 'http://openweathermap.org/img/wn/$iconCode@2x.png';
+        return GestureDetector(
+          child: Card(
+            color: Colors.blueGrey.withOpacity(0.7),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            elevation: 10,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${weatherData[index]['name']}',
+                    style: Lora.textStyle,
+                  ),
+                  Text(
+                    'Temperature: ${(weatherData[index]['main']['temp'] - 273.15).toStringAsFixed(2)}°C',
+                    style: Amiko.textStyle,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Feels Like: ${(weatherData[index]['main']['feels_like'] - 273.15).toStringAsFixed(2)}°C',
+                    style: Amiko.textStyle,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Weather: ${weatherData[index]['weather'][0]['description']}',
+                    style: Amiko.textStyle,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Humidity: ${weatherData[index]['main']['humidity']}%',
+                    style: Amiko.textStyle,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Pressure: ${weatherData[index]['main']['pressure']} hPa',
+                    style: Amiko.textStyle,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Wind Speed: ${weatherData[index]['wind']['speed']} m/s',
+                    style: Amiko.textStyle,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Wind Direction: ${weatherData[index]['wind']['deg']}°',
+                    style: Amiko.textStyle,
+                  ),
+                  const SizedBox(height: 10),
+                  Image.network(iconUrl),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
